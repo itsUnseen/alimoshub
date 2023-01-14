@@ -1,4 +1,7 @@
 _G.JxereasExistingHooks = _G.JxereasExistingHooks or {}
+function math_round(n: number, scale: number?)
+    return tonumber(string.format("%." .. (typeof(scale) == "number" and scale or 2) .. "f", n))
+end
 if not _G.JxereasExistingHooks.GuiDetectionBypass then
     local CoreGui = game.CoreGui
     local ContentProvider = game.ContentProvider
@@ -2589,7 +2592,7 @@ function dropdownHandler:ChangeText(newText: string)
 	self.IdentifierText = newText
 end
 
-function elementHandler:Slider(sliderName: string, callback, maximumValue: number, minimumValue: number): table
+function elementHandler:Slider(sliderName: string, callback, maximumValue: number, minimumValue: number, DecimalPoints: number): table
 	local slider = setmetatable({}, sliderHandler) -- MAKE RIGHT CLICK AND BAR GOES TO MID
 	local sliderInstance = originalElements.Slider:Clone()
 	local isMouseDown = false
@@ -2639,7 +2642,11 @@ function elementHandler:Slider(sliderName: string, callback, maximumValue: numbe
 				sliderValue = minimumValue + (maxMinRange * percentOfBarFilled)
 			end
 			
-			sliderInstance.TextGrouping.NumberText.Text = math.round(sliderValue)
+			if not (DecimalPoints) then
+				sliderInstance.TextGrouping.NumberText.Text = math.round(sliderValue)
+			else
+				sliderInstance.TextGrouping.NumberText.Text = math_round(sliderValue, DecimalPoints)
+			end
 			callback(sliderValue)
 		end
 		
